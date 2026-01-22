@@ -1,0 +1,9 @@
+# Platform-specific overrides for Linux and WSL2
+# This file is automatically loaded by docker compose
+# macOS users: rename this file to disable USB passthrough
+
+services:
+  ros2:
+    privileged: true
+    volumes:
+      - /dev:/dev

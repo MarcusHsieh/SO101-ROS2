@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- CycloneDDS Configuration for SO-101 ROS2 -->
+<!-- Used for DDS discovery in Docker containers -->
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+    <Domain id="any">
+        <General>
+            <!-- Enable multicast for discovery (works on host network) -->
+            <AllowMulticast>default</AllowMulticast>
+            <!-- Enable localhost only if running multiple nodes locally -->
+            <EnableMulticastLoopback>true</EnableMulticastLoopback>
+        </General>
+        <Discovery>
+            <!-- Faster discovery for local development -->
+            <ParticipantIndex>auto</ParticipantIndex>
+        </Discovery>
+        <Internal>
+            <!-- Increase buffer sizes for reliable communication -->
+            <SocketReceiveBufferSize min="1MB" max="10MB"/>
+        </Internal>
+    </Domain>
+</CycloneDDS>

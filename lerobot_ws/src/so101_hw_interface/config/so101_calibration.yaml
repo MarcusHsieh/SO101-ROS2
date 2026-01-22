@@ -1,0 +1,26 @@
+generated: '2026-01-02T00:53:23.552716'
+robot_name: so101_follower
+'1':
+  range_min: 791
+  range_max: 3443
+  homing_offset: 2091
+'2':
+  range_min: 891
+  range_max: 3252
+  homing_offset: 2029
+'3':
+  range_min: 864
+  range_max: 3084
+  homing_offset: 2081
+'4':
+  range_min: 891
+  range_max: 3165
+  homing_offset: 1997
+'5':
+  range_min: 191
+  range_max: 4005
+  homing_offset: 3051
+'6':
+  range_min: 2023
+  range_max: 3467
+  homing_offset: 2137

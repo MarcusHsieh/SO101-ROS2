@@ -1,0 +1,22 @@
+joy_to_servo_node:
+  ros__parameters:
+    # Button mapping
+    buttons:
+      enable: 0
+      disable: 1
+      joint_mode: 4
+
+    # Cartesian space control
+    cartesian:
+      linear:
+        x: 1
+        y: 0
+        z: 4
+      angular:
+        z: 3
+
+    # Joint space control
+    joint:
+      axes_map: [0, 1, 3, 4, 6]
+      # Ensure these joint names match your controller configuration
+      joint_names: ["1", "2", "3", "4", "5"]

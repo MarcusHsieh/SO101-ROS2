@@ -1,0 +1,158 @@
+# SO-101 ROS2 Docker Compose Configuration
+# ==========================================
+# Cross-platform setup for SO-101 robot arm development
+#
+# Usage:
+#   # Start all services
+#   docker compose up -d
+#
+#   # Start specific service
+#   docker compose up -d foxglove
+#
+#   # View logs
+#   docker compose logs -f ros2
+#
+#   # Stop all services
+#   docker compose down
+
+services:
+  # Main ROS2 development container
+  ros2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: so101-ros2:humble
+    container_name: so101_ros2
+    hostname: so101-ros2
+    stdin_open: true
+    tty: true
+
+    # Network mode for ROS2 DDS discovery
+    # Linux: use host network for best performance
+    # Windows/Mac: use bridge network with port forwarding
+    network_mode: ${NETWORK_MODE:-bridge}
+
+    ports:
+      # Foxglove Bridge WebSocket
+      - "8765:8765"
+      # Rosbridge WebSocket (for motor_bridge.py websocket mode)
+      - "9090:9090"
+      # HTTP server for mesh files (Foxglove visualization)
+      - "8082:8080"
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - DISPLAY=${DISPLAY:-}
+      - QT_X11_NO_MITSHM=1
+      # Use default FastDDS (CycloneDDS not installed in base image)
+      # - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+    volumes:
+      # Mount source for development
+      - ../src:/ros2_ws/src:rw
+      # Persist colcon build artifacts
+      - ros2_build:/ros2_ws/build
+      - ros2_install:/ros2_ws/install
+      - ros2_log:/ros2_ws/log
+
+    # Platform-specific notes:
+    # - Linux/WSL2: USB works natively or via usbipd
+    # - macOS: USB requires serial-over-network (see docs/week01.md)
+
+    # For GPU acceleration (Linux with NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+    command: bash
+
+    healthcheck:
+      test: ["CMD", "ros2", "topic", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Foxglove visualization service (uses different port to avoid conflict)
+  foxglove:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: so101-ros2:humble
+    container_name: so101_foxglove
+    network_mode: ${NETWORK_MODE:-bridge}
+
+    ports:
+      - "8766:8765"  # Map to different host port
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+
+    volumes:
+      - ../src:/ros2_ws/src:ro
+      - ros2_install:/ros2_ws/install:ro
+
+    command: foxglove
+
+    profiles:
+      - foxglove-standalone  # Only start with: docker compose --profile foxglove-standalone up
+
+  # RViz display service (Linux with X11 only)
+  display:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: so101-ros2:humble
+    container_name: so101_display
+    network_mode: host
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+
+    volumes:
+      - ../src:/ros2_ws/src:ro
+      - ros2_install:/ros2_ws/install:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+    command: display
+
+    profiles:
+      - linux-gui
+
+  # MoveIt planning service
+  moveit:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: so101-ros2:humble
+    container_name: so101_moveit
+    network_mode: ${NETWORK_MODE:-bridge}
+
+    ports:
+      - "8766:8765"  # Different port to avoid conflict
+
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+
+    volumes:
+      - ../src:/ros2_ws/src:ro
+      - ros2_install:/ros2_ws/install:ro
+
+    command: moveit
+
+    depends_on:
+      - ros2
+
+# Named volumes for persistent storage
+volumes:
+  ros2_build:
+    name: so101_ros2_build
+  ros2_install:
+    name: so101_ros2_install
+  ros2_log:
+    name: so101_ros2_log

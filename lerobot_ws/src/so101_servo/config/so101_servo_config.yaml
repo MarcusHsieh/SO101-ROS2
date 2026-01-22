@@ -1,0 +1,38 @@
+# so101_servo/config/so101_servo_config.yaml
+
+# General Servo parameters:
+use_gazebo: true
+command_in_type: "unitless"
+# Speed and scaling for Cartesian space control
+scale:
+  linear: 1.0  # Max linear velocity of the end-effector (m/s) when joystick is pushed to its limit
+  rotational: 1.0 # Max angular velocity of the end-effector (rad/s) when joystick is pushed to its limit
+  joint: 1.0 # Max joint velocity (rad/s) for joint space control
+
+move_group_name: "arm"    # Must match the planning group name in the SRDF file
+planning_frame: "base"    # The base frame of the robot arm
+ee_frame_name: "gripper"
+robot_link_command_frame: "base"
+is_primary_planning_scene_monitor: false
+
+# Cartesian Servo parameters:
+cartesian_command_in_topic: "/servo_node/delta_twist_cmds"
+# Tell servo_node to listen to this topic for joint control commands
+joint_command_in_topic: "/servo_node/joint_jog"
+status_topic: "/servo_node/status"
+# Set the command output type to std_msgs/Float64MultiArray for position control
+command_out_type: "std_msgs/Float64MultiArray"
+# The topic that the JointGroupPositionController listens on
+command_out_topic: "/arm_controller/commands"
+
+publish_joint_positions: true
+publish_joint_velocities: false
+publish_period: 0.02  # 50 Hz, servo command publication frequency
+
+# Collision checking
+check_collisions: true
+collision_check_rate: 10.0 # Hz
+# Singularity handling
+lower_singularity_threshold: 250.0
+hard_stop_singularity_threshold: 500.0
+joint_limit_margin: 0.01

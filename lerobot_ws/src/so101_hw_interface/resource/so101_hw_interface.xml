@@ -1,0 +1,9 @@
+<library>
+  <class name="so101_hw_interface/So101SystemInterface"
+         type="so101_hw_interface.so101_system_interface.So101SystemInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      The so101 hardware interface for the real robot.
+    </description>
+  </class>
+</library>
