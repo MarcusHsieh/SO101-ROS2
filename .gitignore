@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# ROS2
+install/
+log/
+.colcon_cmd_history
+COLCON_IGNORE
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.venv/
+venv/
+
+# Data files (large)
+*.npz
+*.npy
+*.h5
+*.hdf5
+*.ckpt
+*.pth
+
+# Temporary
+*.tmp
+*.bak
+
+# Instructor materials (solutions)
+.instructor/
+
+# Misc/scratch files
+.misc/
+
+# Claude working directory
+.claude/
+
+# Screenshots
+*.png
+*.jpg
+*.jpeg
